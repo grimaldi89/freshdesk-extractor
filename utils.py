@@ -85,14 +85,23 @@ class Freshdesk:
 
     def insert_json_to_bigquery(self, json_data,table_name):
         """
+
         Insere dados de um JSON em uma tabela do BigQuery.
 
+
+
         Args:
+
         - table_id (str): ID da tabela no formato 'seu-projeto.seu-dataset.sua-tabela'.
+
         - json_data (str or list): String JSON representando uma lista de objetos ou uma lista de dicionários.
 
+
+
         Returns:
+
         - None
+
         """
         print(f"Table name received: {table_name}")
 
