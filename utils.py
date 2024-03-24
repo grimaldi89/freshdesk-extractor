@@ -31,7 +31,6 @@ class Freshdesk:
     def get_time_entries(self,executed_after=None, executed_before=None, page=1, per_page=100):
         base_url = 'https://dp6.freshdesk.com/api/v2/time_entries'
         
-        # Use yesterday as default if dates are not provided
         today = datetime.now()
         last_day_of_last_month = today.replace(day=1) - timedelta(days=1)
         first_day_of_last_month = last_day_of_last_month.replace(day=1,hour=0, minute=0, second=0, microsecond=0).isoformat() + 'Z'
@@ -85,37 +84,22 @@ class Freshdesk:
 
     def insert_json_to_bigquery(self, json_data,table_name):
         """
-
         Insere dados de um JSON em uma tabela do BigQuery.
 
-
-
         Args:
-
         - table_id (str): ID da tabela no formato 'seu-projeto.seu-dataset.sua-tabela'.
-
         - json_data (str or list): String JSON representando uma lista de objetos ou uma lista de dicionários.
 
-
-
         Returns:
-
         - None
-
         """
-        print(f"Table name received: {table_name}")
+       
 
         if table_name is None:
             table_name = self.empty_table_name
         
-        print(f"Table name received: {table_name}")
 
         table_id = f"{self.project_name}.{self.dataset_name}.{table_name}"
-        if self.update_last_month is True:
-            self.client.delete_table(table_id)
-            time.sleep(15)
-
-       
         if isinstance(json_data, str):
             # Converte a string JSON para uma lista de dicionários, se necessário
             json_data = json.loads(json_data)
@@ -124,13 +108,18 @@ class Freshdesk:
         if not json_data:
             print("Nenhum dado para inserir.")
             return
-        #self.client.delete_table(table_id)
+
+        if self.update_last_month is True:
+            self.client.delete_table(table_id)
+            time.sleep(15)
+
+        
         try:
         # Define o ID da tabela
             table = self.client.get_table(table_id)  # Garante que a tabela existe e as colunas estão corretas
             self.client.insert_rows_json(table, json_data)
         except NotFound:
-            print("Tabela não existe. Criando a tabela...")
+            
             # Defina seus campos e tipos aqui
             schema = [
                 self.bigquery.SchemaField("billable", "BOOLEAN", mode="NULLABLE"),
@@ -158,26 +147,19 @@ class Freshdesk:
             table.time_partitioning = time_partitioning
 
             table = self.client.create_table(table)  # Cria a tabela se não existir
-            #time.sleep(50)
-            print(f"Tabela {table_id} criada.")
+            
             table_exists = False
             retries = 100  
             retry_delay = 5
 
             while not table_exists and retries > 0:
                 try:
-                    start_time = time.time()
-                    print(f"Attempting to get table: {table_id}")
                     self.client.insert_rows_json(table, json_data)
                     table_exists = True
-                    end_time = time.time()
-                    print(f"Table {table_id} exists. Processing...")
-                    print(f"Time to fetch table: {end_time - start_time} seconds") 
-                    # ...
+                    
+                    
 
                 except Exception as e:  # Log more details
-                    print(f"Table {table_id} not found. Retrying in {retry_delay} seconds...")
-                    print("Tentativa:{}".format(retries))
                     logging.error(f"Error details: {e}")  # Log error and any response info
                     retries -= 1
                     time.sleep(retry_delay)
