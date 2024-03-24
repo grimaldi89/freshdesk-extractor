@@ -42,9 +42,9 @@ def run_function(request):
         time_entries = freshdesk.get_time_entries(executed_after=executed_after,executed_before=executed_before)
       
         freshdesk.insert_json_to_bigquery(time_entries,table_name)
-        return json.dumps(request_json), 200
+        return "Sucesso", 200
     except Exception as erro:
-      logging.error(erro)
-      return erro,400
+        logging.error(erro)
+        return erro,400
 
 
