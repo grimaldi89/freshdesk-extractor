@@ -32,7 +32,7 @@ def run_function(request):
         freshdesk_request = request_json["freshdesk"]
         bigquery_request = request_json["bigquery"]
         api_key = os.environ.get('api_key')
-        company = "dp6"
+        company = os.environ.get('company')
         
        
         headers = {"Access-Control-Allow-Origin": "*"}
