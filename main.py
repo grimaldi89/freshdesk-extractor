@@ -1,50 +1,54 @@
 import functions_framework
-import requests
 import logging
-import base64
-import json
 import os
-import re
-import json
-from google.cloud import bigquery
-from utils import Freshdesk
+from freshdesk import Freshdesk,GetAgents,TicketFields,Tickets,TimeEntries
+from bigquery import Bigquery,InsertJson
+
+
+def freshdesk_class(name):
+    classes= {
+
+        "Tickets":Tickets,
+        "GetAgents":GetAgents,
+        "TicketFields":TicketFields,
+        "TimeEntries":TimeEntries
+
+    }
+    return classes[name]
+    
+def bigquery_class(name):
+    classes= {
+
+        "InsertJson":InsertJson
+
+    }
+    return classes[name]
 
 
 def run_function(request):
     
     try:
-        if request.method == "OPTIONS":
-            # Responde às solicitações OPTIONS para CORS
-            headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Max-Age": "3600",
-            }
-            return ("", 204, headers)
         request_json = request.get_json(silent=True)
+        freshdesk_request = request_json["freshdesk"]
+        bigquery_request = request_json["bigquery"]
         api_key = os.environ.get('api_key')
-        project_name = request_json["project_name"]
-        dataset_name = request_json["dataset_name"]
-        executed_after = request_json["executed_after"]
-        executed_before = request_json["executed_before"]
-        update_last_month = False
-        table_name = None
-        if "update_last_month" in request_json:
-            update_last_month = request_json["update_last_month"]
-        if "table_name" in request_json:
-            table_name = request_json["table_name"]
+        company = "dp6"
         
-
-        # Seta os cabeçalhos CORS para a solicitação principal
+       
         headers = {"Access-Control-Allow-Origin": "*"}
-        freshdesk = Freshdesk(bigquery,api_key,project_name,dataset_name,update_last_month=update_last_month)
-        time_entries = freshdesk.get_time_entries(executed_after=executed_after,executed_before=executed_before)
-      
-        freshdesk.insert_json_to_bigquery(time_entries,table_name)
+        freshdesk_function = freshdesk_class(freshdesk_request["function_name"])
+        freshdesk = Freshdesk(api_key,company,freshdesk_function())
+        freshdesk_data = freshdesk.run_request(freshdesk_request["function_parameters"])
+       
+        bigquery_request["function_parameters"]["data"] = freshdesk_data
+        bigquery_request["function_parameters"]["schema_name"] = freshdesk_request["function_name"]
+        bigquery_function = bigquery_class(bigquery_request["function_name"])
+        bigquery = Bigquery(bigquery_function())
+        bigquery.run_job(bigquery_request)
+       
+
+       
         return "Sucesso", 200
     except Exception as erro:
         logging.error(erro)
         return erro,400
-
-
