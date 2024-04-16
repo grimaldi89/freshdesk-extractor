@@ -1,0 +1,88 @@
+{
+
+"TimeEntries":[
+ {"name":"billable", "type":"BOOLEAN","mode":"NULLABLE"},
+ {"name":"note", "type":"STRING","mode":"NULLABLE"},
+ {"name":"id", "type":"STRING","mode":"NULLABLE"},
+ {"name":"timer_running", "type":"BOOLEAN","mode":"NULLABLE"},
+ {"name":"agent_id", "type":"STRING","mode":"NULLABLE"},
+ {"name":"ticket_id", "type":"STRING","mode":"NULLABLE"},
+ {"name":"company_id", "type":"STRING","mode":"NULLABLE"},
+ {"name":"time_spent", "type":"STRING","mode":"NULLABLE"},
+ {"name":"executed_at", "type":"TIMESTAMP","mode":"NULLABLE"},
+ {"name":"start_time", "type":"TIMESTAMP","mode":"NULLABLE"},
+ {"name":"created_at", "type":"TIMESTAMP","mode":"NULLABLE"},
+ {"name":"updated_at", "type":"TIMESTAMP","mode":"NULLABLE"},
+ {"name":"time_spent_in_seconds", "type":"INTEGER","mode":"NULLABLE"}
+],
+"GetAgents":[
+    {"name": "available", "type": "BOOLEAN", "mode": "NULLABLE"},
+    {"name": "occasional", "type": "BOOLEAN", "mode": "NULLABLE"},
+    {"name": "id", "type": "INTEGER", "mode": "NULLABLE"},
+    {"name": "ticket_scope", "type": "INTEGER", "mode": "NULLABLE"},
+    {"name": "created_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "last_active_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "available_since", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "type", "type": "STRING", "mode": "NULLABLE"},
+    {
+        "name": "contact",
+        "type": "RECORD",
+        "mode": "NULLABLE",
+        "fields": [
+            {"name": "active", "type": "BOOLEAN", "mode": "NULLABLE"},
+            {"name": "email", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "job_title", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "language", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "last_login_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "mobile", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "name", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "phone", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "time_zone", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "created_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+            {
+                "name": "avatar",
+                "type": "RECORD",
+                "mode": "NULLABLE",
+                "fields": [
+                    {"name": "id", "type": "INTEGER", "mode": "NULLABLE"},
+                    {"name": "name", "type": "STRING", "mode": "NULLABLE"},
+                    {"name": "content_type", "type": "STRING", "mode": "NULLABLE"},
+                    {"name": "size", "type": "INTEGER", "mode": "NULLABLE"},
+                    {"name": "created_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+                    {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+                    {"name": "attachment_url", "type": "STRING", "mode": "NULLABLE"},
+                    {"name": "thumb_url", "type": "STRING", "mode": "NULLABLE"}
+                ]
+            }
+        ]
+    },
+    {"name": "deactivated", "type": "BOOLEAN", "mode": "NULLABLE"},
+    {"name": "signature", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "agent_level_id", "type": "INTEGER", "mode": "NULLABLE"},
+    {"name": "focus_mode", "type": "BOOLEAN", "mode": "NULLABLE"}
+],
+"TicketFields":[
+ {"name": "id", "type": "INTEGER", "mode": "NULLABLE"},
+ {"name": "name", "type": "STRING", "mode": "NULLABLE"},
+ {"name": "label", "type": "STRING", "mode": "NULLABLE"},
+ {"name": "description", "type": "STRING", "mode": "NULLABLE"},
+ {"name": "position", "type": "INTEGER", "mode": "NULLABLE"},
+ {"name": "required_for_closure", "type": "BOOLEAN", "mode": "NULLABLE"},
+ {"name": "required_for_agents", "type": "BOOLEAN", "mode": "NULLABLE"},
+ {"name": "type", "type": "STRING", "mode": "NULLABLE"},
+ {"name": "default", "type": "BOOLEAN", "mode": "NULLABLE"},
+ {"name": "customers_can_edit", "type": "BOOLEAN", "mode": "NULLABLE"},
+  {"name": "customers_can_filter", "type": "BOOLEAN", "mode": "NULLABLE"},
+  {"name": "label_for_customers", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "required_for_customers", "type": "BOOLEAN", "mode": "NULLABLE"},
+  {"name": "displayed_to_customers", "type": "BOOLEAN", "mode": "NULLABLE"},
+  {"name": "created_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+  {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+  {"name": "choices", "type": "JSON", "mode": "NULLABLE"},
+  {"name": "nested_ticket_fields", "type": "JSON", "mode": "NULLABLE"}
+]
+
+
+}
