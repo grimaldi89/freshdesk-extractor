@@ -57,7 +57,7 @@ class BigqueryUtils():
         else:
             return None
 
-    def write_disposition(self,disposition_option="WRITE_APPEND"):
+    def write_disposition(self,disposition_option):
         options = {
             "WRITE_APPEND":bigquery.WriteDisposition.WRITE_APPEND,
             "WRITE_TRUNCATE":bigquery.WriteDisposition.WRITE_TRUNCATE,
@@ -65,7 +65,7 @@ class BigqueryUtils():
         }
         return options[disposition_option]
 
-    def create_disposition(self,create_option="CREATE_IF_NEEDED"):
+    def create_disposition(self,create_option):
         options = {
             "CREATE_IF_NEEDED":bigquery.CreateDisposition.CREATE_IF_NEEDED,
             "CREATE_NEVER":bigquery.CreateDisposition.CREATE_NEVER
@@ -84,15 +84,14 @@ class InsertJson(BigqueryPattern,BigqueryUtils):
             project_name = params["project_name"]
             dataset_name = params["dataset_name"]
             table_name = Utils.get_table_name(params["table_name"])
-            write_disposition = "WRITE_APPEND"
+        
+            if not json_data:
+                print("Sem dados para inserir")
+                return True
 
-            if "write_disposition" in params:
-                write_disposition = params["write_disposition"]
+            write_disposition = params.get("write_disposition","WRITE_APPEND")
+            create_disposition = params.get("create_disposition","CREATE_IF_NEEDED")            
 
-            create_disposition = "CREATE_IF_NEEDED"
-
-            if "create_disposition" in params:
-                create_disposition = params["create_disposition"]
             autodetect = False
             schema = self.schema(schema_name)
             if not schema:
