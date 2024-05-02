@@ -38,7 +38,8 @@ def run_function(request):
         headers = {"Access-Control-Allow-Origin": "*"}
         freshdesk_function = freshdesk_class(freshdesk_request["function_name"])
         freshdesk = Freshdesk(api_key,company,freshdesk_function())
-        freshdesk_data = freshdesk.run_request(freshdesk_request["function_parameters"])
+        freshdesk_function_parameters = freshdesk_request["function_parameters"]
+        freshdesk_data = freshdesk.run_request(freshdesk_function_parameters)
        
         bigquery_request["function_parameters"]["data"] = freshdesk_data
         bigquery_request["function_parameters"]["schema_name"] = freshdesk_request["function_name"]
