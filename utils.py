@@ -27,12 +27,9 @@ class Utils:
           else:
             return table_name
 
-    def get_table_id(self,project_name,dataset_name,table_name):
-
-        return f"{project_name}.{dataset_name}.{table_name}"
 
 
-    def is_iso_format(self, date_string):
+    def is_iso_format(date_string):
         """
         Verifica se a string de data está no formato ISO.
 
@@ -48,7 +45,7 @@ class Utils:
         except ValueError:
             return False
 
-    def date_util(self, date_value):
+    def date_util(date_value):
         """
         Manipula a data com base no valor fornecido.
 
@@ -60,16 +57,16 @@ class Utils:
         """
         date_value = date_value.lower().strip()
         if date_value == "yesterday":
-            yesterday = (datetime.now() - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + 'Z'
+            yesterday = (datetime.now() - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%d")
             return yesterday
         elif date_value == "last_month_start":
-            last_month_start = (datetime.now().replace(day=1) - timedelta(days=1)).replace(day=1).replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + 'Z'
+            last_month_start = (datetime.now().replace(day=1) - timedelta(days=1)).replace(day=1).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%d")
             return last_month_start
         elif date_value == "last_month_end":
-            last_month_end = (datetime.now().replace(day=1) - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + 'Z'
+            last_month_end = (datetime.now().replace(day=1) - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%d")
             return last_month_end
-        elif self.is_iso_format(date_value):
-            return datetime.strptime(date_value, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + 'Z'
+        elif Utils.is_iso_format(date_value):
+            return datetime.strptime(date_value, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%d")
         else:
             return "Formato indevido"
     @staticmethod
@@ -83,6 +80,10 @@ class Utils:
             params["page"] = 1  # Inicia a paginação na primeira página
         if "per_page" not in params:
             params["per_page"] = 100  # Define um padrão de 100 itens por página
+        if "executed_after" in params:
+            params["executed_after"] = Utils.date_util(params["executed_after"])
+        if "executed_before" in params:
+            params["executed_before"] = Utils.date_util(params["executed_before"])
 
         all_results = []
         has_more_pages = True
