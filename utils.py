@@ -1,3 +1,13 @@
+# utils.py
+
+"""
+Arquivo utils.py
+Propósito: Este módulo contém funções utilitárias para operações de data e solicitações à API do Freshdesk.
+Autor: Rodolfo Grimaldi
+Data de criação: 16/05/2024
+Última atualização: 16/05/2024
+"""
+
 import json
 import logging
 import requests
@@ -7,37 +17,47 @@ from datetime import datetime, timedelta
 from abc import ABC, abstractmethod
 
 class Utils:
+    """
+    Classe utilitária contendo métodos estáticos para operações diversas.
+    """
+    
     @staticmethod
     def get_table_name(table_name):
-          last_day_of_last_month = datetime.now().replace(day=1) - timedelta(days=1)
-          last_month_table_suffix = last_day_of_last_month.strftime("%Y%m")
-          last_month_table_name = f"freshdesk_time_entries_{last_month_table_suffix}"
-          yesterday = datetime.now() - timedelta(days=1)
-          yesterday_table_suffix = yesterday.strftime("%Y%m")
-          yesterday_table_name = f"freshdesk_time_entries_{yesterday_table_suffix}"
+        """
+        Obtém o nome da tabela com base no sufixo da data (ontem ou último mês).
 
-          if not table_name:
+        Parâmetros:
+        - table_name (str): Nome da tabela especificada.
+
+        Retorno:
+        - str: Nome da tabela construído com base na data.
+        """
+        last_day_of_last_month = datetime.now().replace(day=1) - timedelta(days=1)
+        last_month_table_suffix = last_day_of_last_month.strftime("%Y%m")
+        last_month_table_name = f"freshdesk_time_entries_{last_month_table_suffix}"
+        yesterday = datetime.now() - timedelta(days=1)
+        yesterday_table_suffix = yesterday.strftime("%Y%m")
+        yesterday_table_name = f"freshdesk_time_entries_{yesterday_table_suffix}"
+
+        if not table_name:
             return yesterday_table_name
-          elif table_name == "yesterday":
+        elif table_name == "yesterday":
             return yesterday_table_name
-
-          elif table_name == "last_month":
-
+        elif table_name == "last_month":
             return last_month_table_name
-          else:
+        else:
             return table_name
 
-
-
+    @staticmethod
     def is_iso_format(date_string):
         """
         Verifica se a string de data está no formato ISO.
 
-        Args:
-            date_string (str): String de data a ser verificada.
+        Parâmetros:
+        - date_string (str): String de data a ser verificada.
 
-        Returns:
-            bool: True se a string estiver no formato ISO, False caso contrário.
+        Retorno:
+        - bool: True se a string estiver no formato ISO, False caso contrário.
         """
         try:
             datetime.strptime(date_string, "%Y-%m-%d")
@@ -45,15 +65,16 @@ class Utils:
         except ValueError:
             return False
 
+    @staticmethod
     def date_util(date_value):
         """
         Manipula a data com base no valor fornecido.
 
-        Args:
-            date_value (str): Valor da data.
+        Parâmetros:
+        - date_value (str): Valor da data.
 
-        Returns:
-            str: Data manipulada no formato ISO.
+        Retorno:
+        - str: Data manipulada no formato ISO.
         """
         date_value = date_value.lower().strip()
         if date_value == "yesterday":
@@ -69,10 +90,23 @@ class Utils:
             return datetime.strptime(date_value, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%d")
         else:
             return "Formato indevido"
+
     @staticmethod
     def make_request(api_key, domain, path, params=None):
         """
         Realiza uma solicitação à API do Freshdesk, lidando com a paginação automaticamente.
+
+        Parâmetros:
+        - api_key (str): Chave de API para autenticação no Freshdesk.
+        - domain (str): Domínio da empresa no Freshdesk.
+        - path (str): Caminho da API a ser acessado.
+        - params (dict): Parâmetros da solicitação (opcional).
+
+        Retorno:
+        - list: Lista de resultados da API do Freshdesk.
+
+        Exceções:
+        - requests.HTTPError: Levantada se houver um erro na solicitação à API.
         """
         if params is None:
             params = {}
@@ -106,4 +140,5 @@ class Utils:
                     has_more_pages = False
             else:
                 raise requests.HTTPError(f'Error making request to Freshdesk API: {response.status_code} - {response.text}')
+        
         return all_results
