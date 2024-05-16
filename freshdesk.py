@@ -3,7 +3,7 @@
 """
 Arquivo freshdesk.py
 Propósito: Este módulo interage com a API do Freshdesk usando diferentes estratégias de requisição.
-Autor: Seu Nome
+Autor: Rodolfo Grimaldi
 Data de criação: 16/05/2024
 Última atualização: 16/05/2024
 """
